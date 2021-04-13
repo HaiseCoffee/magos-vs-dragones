@@ -17,7 +17,7 @@
                 <div class="curarthbar text-center" 
                 style="background-color: goldenrod; margin: 0; color: white;"
                 :style="{width: saludMago + '%'}">
-                salud del mago
+                {{ saludMago }} %
                 </div>
             </div>
         </div>
@@ -28,7 +28,7 @@
                     style="background-color: rgb(3, 110, 12); margin: 0; color: white;"
                     :style="{width: saludDragon + '%'}"
                     >
-                    salud del dragon
+                    {{ saludDragon }} %
                 </div>
             </div></div>
     </section>
@@ -52,8 +52,8 @@
             <ul>
                 <li v-for="(turno,index) in turnos"
                 :class="cssParaLaFila(turno)"
-                :style="{'text-align': turno.esMago?'left':'right','opacity':index <=1?1:0.3}">
-                    {{ turno.text }} 
+                :style="{'text-align': turno.esMago?'left':'right','opacity':index <=1 ? 1 : 0.3}">
+                    {{ turno }} 
                 </li>
             </ul>
             
@@ -63,3 +63,91 @@
 <!-- <script src="app.js"></script> -->
 </body>
 </html>
+
+<script>
+    var miVue = new Vue({
+        el: '#app',
+        data: {
+            saludMago: 0,
+            saludDragon: 0,
+            hayUnaPartidaEnJuego: false,
+            usoEspecialMago: 0,
+            turnos: []
+        },
+        computed: {
+
+        },
+        methods: {
+            empezar() {
+                this.hayUnaPartidaEnJuego = !this.hayUnaPartidaEnJuego
+            },
+
+            indicarGanador() {
+                if(this.saludDragon <= 0) {alert('Ganaste') 
+                this.empezarPartida()} 
+                else if(this.saludMago <= 0) {alert('Perdiste') 
+                this.empezarPartida()}
+            },
+            
+            empezarPartida() {
+                this.saludMago = 100
+                this.saludDragon = 100
+                usoEspecialMago = 0
+                turnos = []
+                this.empezar()
+            },
+
+            atacar() {
+                this.atacarDragon()
+                let menosDrag = Math.floor(Math.random() * 10) + 3
+                this.saludDragon -= menosDrag
+                this.turnos.push(menosDrag)
+                this.indicarGanador()
+            },
+
+            atacarDragon() {
+                let menosMago = Math.floor(Math.random() * 12) + 5
+                this.saludMago -=  menosMago
+                this.turnos.push(menosMago)
+                this.indicarGanador()
+
+            },
+
+            ataqueEspecial() {
+                if(this.usoEspecialMago < 2) {
+                    this.saludDragon -= Math.floor(Math.random() * 10) + 20
+                    this.atacarDragon()
+
+                    this.usoEspecialMago++
+                    this.indicarGanador()
+
+                } else {
+                    alert('No tenes mas ataques especiales')
+                }
+            },
+
+            curar() {
+                if(this.saludMago <= 90) {
+                    this.saludMago += 10
+                    this.atacarDragon()
+                    this.indicarGanador()
+
+                } else {
+                    alert('No podes tener una vida superior a 100')
+                    this.atacarDragon()
+                    this.indicarGanador()
+                }
+            },
+
+            terminarPartida() {
+                this.empezarPartida()
+            },
+
+            cssParaLaFila(turno) {
+                turno = 'asd'
+                
+            }
+        },
+        created() {}
+    })
+</script>
